@@ -1,5 +1,7 @@
 using UnityEngine;
-public interface IDropEventHandler
+public interface IDropContainerEventHandler
 {
-    void HandleDropEvent(GameObject containerObject, GameObject droppedObject);
+    void HandleEnterEvent(GameObject containerObject, GameObject droppedObject);
+    void HandleStayEvent(GameObject containerObject, GameObject droppedObject);
+    void HandleExitEvent(GameObject containerObject, GameObject droppedObject);
 }

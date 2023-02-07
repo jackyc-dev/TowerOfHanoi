@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragAndDrop : MonoBehaviour
+public class DragAndDrop : MonoBehaviour, IDraggableObjectEventHandler
 {
     private Vector3 _originalPosition;
+    public bool IsEnabled;
 
     void Start() 
     {
@@ -14,12 +15,14 @@ public class DragAndDrop : MonoBehaviour
 
     public void OnMouseDown()
     {
+        if(!IsEnabled) return;
         Debug.Log("DragAndDrop: OnMouseDown");
-        _originalPosition = Input.mousePosition;
+        _originalPosition = gameObject.transform.position;
     }
 
     public void OnMouseDrag() 
     {
+        if(!IsEnabled) return;
         Debug.Log("DragAndDrop: OnMouseDrag");
         transform.position = GetMousePos();
     }
@@ -29,5 +32,14 @@ public class DragAndDrop : MonoBehaviour
         var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
         return mousePos;
+    }
+
+    public void HandleInvalidDragAndDropEvent()
+    {
+        gameObject.transform.position = _originalPosition;
+    }
+    public void SetEnable(bool IsEnabled)
+    {
+        this.IsEnabled = IsEnabled;
     }
 }

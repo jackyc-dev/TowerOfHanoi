@@ -16,7 +16,6 @@ public class DiskController : MonoBehaviour
 
         DiskColor.a = 1f;
         _diskSprite_SpriteRenderer.color = DiskColor;
-
         // gameObject.transform.localScale = GetScaleFromDiskSize();
     }
 

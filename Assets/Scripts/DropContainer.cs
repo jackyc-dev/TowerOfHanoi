@@ -24,7 +24,15 @@ public class DropContainer : MonoBehaviour
         snapPosition.x = gameObject.transform.position.x;
         col.gameObject.transform.position = snapPosition;
         
-        var towerController = gameObject.GetComponent<TowerController>();
-        towerController.HandleDropEvent(gameObject, col.gameObject);
+        IDropContainerEventHandler towerController = gameObject.GetComponent<TowerController>();
+        towerController.HandleEnterEvent(gameObject, col.gameObject);
+    }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        Debug.Log("DropContainer: OnTriggerExit2D");
+
+        IDropContainerEventHandler towerController = gameObject.GetComponent<TowerController>();
+        towerController.HandleExitEvent(gameObject, col.gameObject);
     }
 }

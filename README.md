@@ -9,9 +9,10 @@ Tasks:
 - Component as Template Setup (will move to prefab)
   - Disk with parameters that allows for customizability [Done]
   - Tower component
-    - Tracking of Disks from component instead of a game tracker
+    - Tracking of Disks from component instead of a game tracker [Done]
+    - Fix tracking on disks as they are being moved between Towers
 - Game Mechanics
-  - Invalidate drop event and revert Disk location back to its source
+  - Invalidate drop event and revert Disk location back to its source [Done]
   - Explore if we can allow updating the number of Disks in the game
   - Tracking on Tower's disk content
     - establish win condition

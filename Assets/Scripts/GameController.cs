@@ -32,6 +32,7 @@ public class GameController : MonoBehaviour
             
             // Set specific properties here
             _diskController.SetDiskSize(i);
+            _disk.name = $"Disk({i})";
 
             _disk.transform.SetParent(_diskStartingLocation.transform);
             // Utils.SetCoroutine(.5f);
