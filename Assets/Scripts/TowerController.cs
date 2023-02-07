@@ -24,7 +24,7 @@ public class TowerController : MonoBehaviour, IDropContainerEventHandler
     // Update is called once per frame
     void Update()
     {
-        
+        ToggleEnableDisksInTower();
     }
 
     private bool IsDroppedDiscValidToBeAddedInTower(GameObject droppedDiskObject, IEnumerable<GameObject> existingDiskObjects) 
@@ -49,23 +49,50 @@ public class TowerController : MonoBehaviour, IDropContainerEventHandler
             return;
         }
 
-        // Disable drag and drop function on all pre-existing disks
-        foreach(var existingDisk in existingDiskObjects)
-        {
-            existingDisk.GetComponent<IDraggableObjectEventHandler>().SetEnable(false);
-        }
-
         // Add to list of disks
         droppedObject.transform.SetParent(_diskContainer.transform);
+        ToggleEnableDisksInTower();
     }
 
     void IDropContainerEventHandler.HandleStayEvent(GameObject containerObject, GameObject droppedObject)
     {
         // throw new System.NotImplementedException();
+        // ToggleEnableDisksInTower();
     }
 
     void IDropContainerEventHandler.HandleExitEvent(GameObject containerObject, GameObject droppedObject)
     {
-        // throw new System.NotImplementedException();
+        // var removedDisk = droppedObject.GetComponent<DiskController>();
+        // // throw new System.NotImplementedException();
+        // var remainingDisks = 
+        //     Utils.GetChildGameObjects(containerObject.transform.Find("DiskContainer").gameObject)
+        //     .Where(d => d.GetComponent<DiskController>().DiskSize != removedDisk.DiskSize);
+        // if(remainingDisks.Count() > 0) 
+        // {
+        //     remainingDisks.LastOrDefault().GetComponent<IDraggableObjectEventHandler>().SetEnable(true);
+        // }
+        // ToggleEnableDisksInTower();
+    }
+
+    void ToggleEnableDisksInTower()
+    {
+        Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower()");
+        var disks = Utils.GetChildGameObjects(_diskContainer);
+        var disksCount = disks.Count();
+        
+        if(disksCount == 0) return;
+        if(disksCount > 1 )
+        {
+            foreach(var disk in disks)
+            {
+                disk.transform.GetComponent<IDraggableObjectEventHandler>().SetEnable(false);
+                Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower(): disabled {disk.name}");
+            }
+        }
+        
+        var minDisk = disks
+            .FirstOrDefault(x => x.transform.GetComponent<DiskController>().DiskSize == disks.Min(y => y.transform.GetComponent<DiskController>().DiskSize));
+        minDisk.transform.GetComponent<IDraggableObjectEventHandler>().SetEnable(true);
+        Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower(): enabled {minDisk.name}");
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class DragAndDrop : MonoBehaviour, IDraggableObjectEventHandler
 {
     private Vector3 _originalPosition;
-    public bool IsEnabled;
+    public bool Enabled;
 
     void Start() 
     {
@@ -15,15 +15,15 @@ public class DragAndDrop : MonoBehaviour, IDraggableObjectEventHandler
 
     public void OnMouseDown()
     {
-        if(!IsEnabled) return;
+        if(!Enabled) return;
         Debug.Log("DragAndDrop: OnMouseDown");
         _originalPosition = gameObject.transform.position;
     }
 
     public void OnMouseDrag() 
     {
-        if(!IsEnabled) return;
-        Debug.Log("DragAndDrop: OnMouseDrag");
+        if(!Enabled) return;
+        // Debug.Log("DragAndDrop: OnMouseDrag");
         transform.position = GetMousePos();
     }
 
@@ -38,8 +38,7 @@ public class DragAndDrop : MonoBehaviour, IDraggableObjectEventHandler
     {
         gameObject.transform.position = _originalPosition;
     }
-    public void SetEnable(bool IsEnabled)
-    {
-        this.IsEnabled = IsEnabled;
-    }
+    public void SetEnable(bool IsEnabled) => Enabled = IsEnabled;
+
+    public bool IsEnabled() => Enabled;
 }

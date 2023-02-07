@@ -10,7 +10,7 @@ Tasks:
   - Disk with parameters that allows for customizability [Done]
   - Tower component
     - Tracking of Disks from component instead of a game tracker [Done]
-    - Fix tracking on disks as they are being moved between Towers
+    - Fix tracking on disks as they are being moved between Towers [InProg]
 - Game Mechanics
   - Invalidate drop event and revert Disk location back to its source [Done]
   - Explore if we can allow updating the number of Disks in the game

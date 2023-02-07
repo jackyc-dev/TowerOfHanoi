@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         _diskTemplate = gameObject.transform.Find("Templates/Disk").gameObject;
-        _towerTemplate = gameObject.transform.Find("Templates/Tower").gameObject;
+        // _towerTemplate = gameObject.transform.Find("Templates/Tower").gameObject;
         _towerContainer = gameObject.transform.Find("Wrapper/Towers").gameObject;
         _wrapper = gameObject.transform.Find("Wrapper").gameObject;
         _diskStartingLocation = gameObject.transform.Find("Wrapper/DiskStartingLocation").gameObject;
@@ -34,6 +34,7 @@ public class GameController : MonoBehaviour
             _diskController.SetDiskSize(i);
             _disk.name = $"Disk({i})";
 
+            _disk.transform.localPosition = new Vector3(-6, 4, 0);
             _disk.transform.SetParent(_diskStartingLocation.transform);
             // Utils.SetCoroutine(.5f);
 
