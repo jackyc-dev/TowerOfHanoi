@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TowerController : MonoBehaviour, IDropContainerEventHandler
+public class TowerController : BaseBehaviour, IDropContainerEventHandler, ITowerPropertyManager
 {
     public Color TowerColor;
     public Vector3 TowerPosition;
+    public GameController GameEventHandler; // Unsure how we can expose an interface as part of the wiring, probably referenced by code
+    public GameObject DiskContainer;
 
-    public Stack<GameObject> StoredDisks;
-
-    private GameObject _diskContainer;
-
+    private IGameEventHandler _gameEventHandler;
     
     // Start is called before the first frame update
     void Start()
     {
         gameObject.transform.position = TowerPosition;
-        _diskContainer = gameObject.transform.Find("DiskContainer").gameObject;
-        StoredDisks = new Stack<GameObject>();
+        DiskContainer = gameObject.transform.Find("DiskContainer").gameObject;
+        _gameEventHandler = GameEventHandler.transform.GetComponent<IGameEventHandler>();
     }
 
     // Update is called once per frame
@@ -31,11 +30,10 @@ public class TowerController : MonoBehaviour, IDropContainerEventHandler
     {
         if(existingDiskObjects.Count() == 0) return true;
 
-        var droppedDiskSize = droppedDiskObject.GetComponent<DiskController>().DiskSize;
-        var maxDiskSize = existingDiskObjects.Select(d => d.GetComponent<DiskController>().DiskSize).Max();
+        var droppedDiskSize = droppedDiskObject.GetComponent<IDiskPropertyManager>().GetDiskSize();
+        var maxDiskSize = existingDiskObjects.Select(d => d.GetComponent<IDiskPropertyManager>().GetDiskSize()).Max();
 
         return droppedDiskSize < maxDiskSize;
-        
     }
 
     public void HandleEnterEvent(GameObject containerObject, GameObject droppedObject)
@@ -50,8 +48,13 @@ public class TowerController : MonoBehaviour, IDropContainerEventHandler
         }
 
         // Add to list of disks
-        droppedObject.transform.SetParent(_diskContainer.transform);
+        droppedObject.transform.SetParent(DiskContainer.transform);
         ToggleEnableDisksInTower();
+
+        if(_gameEventHandler != null)
+        {
+            _gameEventHandler.TowerStackUpdated(containerObject);
+        }
     }
 
     void IDropContainerEventHandler.HandleStayEvent(GameObject containerObject, GameObject droppedObject)
@@ -76,23 +79,35 @@ public class TowerController : MonoBehaviour, IDropContainerEventHandler
 
     void ToggleEnableDisksInTower()
     {
-        Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower()");
-        var disks = Utils.GetChildGameObjects(_diskContainer);
+        // Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower()");
+        var disks = Utils.GetChildGameObjects(DiskContainer);
         var disksCount = disks.Count();
         
-        if(disksCount == 0) return;
-        if(disksCount > 1 )
+        if(disksCount == 0) return; // Nothing to check if the list is empty
+
+        foreach(var disk in disks)
         {
-            foreach(var disk in disks)
-            {
-                disk.transform.GetComponent<IDraggableObjectEventHandler>().SetEnable(false);
-                Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower(): disabled {disk.name}");
-            }
+            SetEnabledFn(disk, false);
+            // Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower(): disabled {disk.name}");
         }
-        
-        var minDisk = disks
-            .FirstOrDefault(x => x.transform.GetComponent<DiskController>().DiskSize == disks.Min(y => y.transform.GetComponent<DiskController>().DiskSize));
-        minDisk.transform.GetComponent<IDraggableObjectEventHandler>().SetEnable(true);
-        Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower(): enabled {minDisk.name}");
+
+        var minDisk = disks.FirstOrDefault(x => GetDiskSizeFn(x) == disks.Min(y => GetDiskSizeFn(y)));
+        SetEnabledFn(minDisk, true);
+        // Debug.Log($"{gameObject.name} - ToggleEnableDisksInTower(): enabled {minDisk.name}");
     }
+
+    public void ResetTower()
+    {
+        Debug.Log($"TowerController: ResetTower");
+        var diskCount = DiskContainer.transform.childCount;
+        for(int i = diskCount; i > 0; i--)
+        {
+            var toBeDestroyed = DiskContainer.transform.GetChild(i-1);
+            Destroy(toBeDestroyed.gameObject);
+        }
+    }
+
+    // Utils
+    private float GetDiskSizeFn(GameObject g) => g.transform.GetComponent<IDiskPropertyManager>().GetDiskSize();
+    private void SetEnabledFn(GameObject g, bool enabled) => g.transform.GetComponent<IDraggableObjectEventHandler>().SetEnable(enabled);
 }

@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DiskController : MonoBehaviour
+public class DiskController : BaseBehaviour, IDiskPropertyManager
 {
     public float DiskSize;
     public Color DiskColor;
+    public GameObject DiskSprite;
 
-    private GameObject _diskSprite;
-    private SpriteRenderer _diskSprite_SpriteRenderer;
     void Start()
     {
-        _diskSprite = gameObject.transform.Find("DiskSprite").gameObject;
-        _diskSprite_SpriteRenderer = _diskSprite.GetComponent<SpriteRenderer>();
+        var _diskSprite_SpriteRenderer = DiskSprite.GetComponent<SpriteRenderer>();
 
         DiskColor.a = 1f;
         _diskSprite_SpriteRenderer.color = DiskColor;
-        // gameObject.transform.localScale = GetScaleFromDiskSize();
     }
 
     // Update is called once per frame
@@ -27,5 +24,6 @@ public class DiskController : MonoBehaviour
 
     private Vector3 GetScaleFromDiskSize => new Vector3((DiskSize * 3) + 10f, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
 
-    public void SetDiskSize(int size) => DiskSize = size;
+    public float GetDiskSize() => DiskSize;
+    public void SetDiskSize(float size) => DiskSize = size;
 }

@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragAndDrop : MonoBehaviour, IDraggableObjectEventHandler
+public class DragAndDrop : BaseBehaviour, IDraggableObjectEventHandler
 {
     private Vector3 _originalPosition;
     public bool Enabled;
 
     void Start() 
     {
-        Debug.Log("DragAndDrop: Start");
+        // Debug.Log("DragAndDrop: Start");
     }
 
     public void OnMouseDown()
     {
         if(!Enabled) return;
-        Debug.Log("DragAndDrop: OnMouseDown");
+        // Debug.Log("DragAndDrop: OnMouseDown");
         _originalPosition = gameObject.transform.position;
     }
 
@@ -25,6 +25,11 @@ public class DragAndDrop : MonoBehaviour, IDraggableObjectEventHandler
         if(!Enabled) return;
         // Debug.Log("DragAndDrop: OnMouseDrag");
         transform.position = GetMousePos();
+    }
+
+    public void OnMouseUp()
+    {
+        
     }
 
     Vector3 GetMousePos()
